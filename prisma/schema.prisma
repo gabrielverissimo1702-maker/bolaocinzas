@@ -1,0 +1,296 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum CompeticaoTipo {
+  LIGA
+  COPA
+  SUPERCOPA
+}
+
+enum CompeticaoStatus {
+  EM_ANDAMENTO
+  ENCERRADA
+}
+
+enum EtapaStatus {
+  ABERTA
+  FECHADA
+}
+
+enum TemporadaStatus {
+  ABERTA
+  FECHADA
+}
+
+enum ParticipacaoStatus {
+  PENDENTE
+  APROVADO
+  REJEITADO
+  REMOVIDO
+}
+
+enum ResultadoTipo {
+  PENDENTE
+  CRAVADA
+  ACERTO_PARCIAL
+  ERRO
+}
+
+enum CriterioDesempate {
+  JOGO_EXTRA
+  MAIS_CRAVADAS
+  MAIS_ACERTOS
+  SORTEIO_DIRETO
+}
+
+enum FormaGeracaoConfrontos {
+  SORTEIO
+  MANUAL
+  HIBRIDO
+}
+
+enum ConfrontoSlot {
+  A
+  B
+}
+
+enum PadraoUniforme {
+  SOLIDO
+  LISTRAS_VERTICAIS
+  LISTRAS_HORIZONTAIS
+  LISTRAS_DIAGONAIS
+}
+
+model Usuario {
+  id             String         @id @default(cuid())
+  nome           String
+  email          String         @unique
+  senhaHash      String
+  sigla          String         @default("USR")
+  cores          String[]       @default(["#6B7280"])
+  padraoUniforme PadraoUniforme @default(SOLIDO)
+  createdAt      DateTime       @default(now())
+
+  savesCriados           Save[]                  @relation("SaveCriador")
+  temporadaParticipacoes TemporadaParticipante[]
+  copaParticipacoes      CopaParticipante[]
+  palpites               Palpite[]
+  sessoes                Sessao[]
+  competicoesVencidas    Competicao[]            @relation("CompeticaoCampeao")
+
+  @@index([email])
+}
+
+model Sessao {
+  id        String   @id @default(cuid())
+  usuarioId String
+  usuario   Usuario  @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  expiraEm  DateTime
+  createdAt DateTime @default(now())
+
+  @@index([usuarioId])
+}
+
+model Save {
+  id           String   @id @default(cuid())
+  nome         String
+  codigoAcesso String   @unique
+  criadorId    String
+  criador      Usuario  @relation("SaveCriador", fields: [criadorId], references: [id])
+  createdAt    DateTime @default(now())
+
+  temporadas Temporada[]
+  times      Time[]
+}
+
+model Temporada {
+  id        String          @id @default(cuid())
+  saveId    String
+  save      Save            @relation(fields: [saveId], references: [id], onDelete: Cascade)
+  nome      String
+  status    TemporadaStatus @default(ABERTA)
+  createdAt DateTime        @default(now())
+
+  competicoes   Competicao[]
+  participantes TemporadaParticipante[]
+
+  @@index([saveId])
+}
+
+model TemporadaParticipante {
+  id           String             @id @default(cuid())
+  temporadaId  String
+  temporada    Temporada          @relation(fields: [temporadaId], references: [id], onDelete: Cascade)
+  usuarioId    String
+  usuario      Usuario            @relation(fields: [usuarioId], references: [id])
+  status       ParticipacaoStatus @default(PENDENTE)
+  solicitadoEm DateTime           @default(now())
+  decididoEm   DateTime?
+
+  @@unique([temporadaId, usuarioId])
+  @@index([usuarioId])
+}
+
+model Time {
+  id             String         @id @default(cuid())
+  saveId         String
+  save           Save           @relation(fields: [saveId], references: [id], onDelete: Cascade)
+  nome           String
+  sigla          String
+  cores          String[]
+  padraoUniforme PadraoUniforme @default(SOLIDO)
+  createdAt      DateTime       @default(now())
+
+  jogosCasa      Jogo[] @relation("JogoTimeCasa")
+  jogosVisitante Jogo[] @relation("JogoTimeVisitante")
+
+  @@unique([saveId, nome])
+}
+
+model Competicao {
+  id          String           @id @default(cuid())
+  temporadaId String
+  temporada   Temporada        @relation(fields: [temporadaId], references: [id], onDelete: Cascade)
+  tipo        CompeticaoTipo
+  nome        String
+  status      CompeticaoStatus @default(EM_ANDAMENTO)
+
+  // Compartilhado (Liga/Copa/Supercopa)
+  pontosCravada     Int
+  pontosAcerto      Int
+  criterioDesempate CriterioDesempate? // Copa/Supercopa apenas
+
+  // Liga
+  numeroRodadas  Int?
+  jogosPorRodada Int?
+
+  // Copa
+  numeroParticipantes    Int?
+  jogosPorFase           Int?
+  formaGeracaoConfrontos FormaGeracaoConfrontos?
+
+  // Supercopa
+  numeroJogos Int?
+
+  campeaoUsuarioId String?
+  campeao          Usuario? @relation("CompeticaoCampeao", fields: [campeaoUsuarioId], references: [id])
+  createdAt        DateTime @default(now())
+
+  etapas            Etapa[]
+  copaParticipantes CopaParticipante[]
+
+  @@index([temporadaId])
+}
+
+// Rodada (Liga) e Fase (Copa) unificadas
+model Etapa {
+  id           String      @id @default(cuid())
+  competicaoId String
+  competicao   Competicao  @relation(fields: [competicaoId], references: [id], onDelete: Cascade)
+  nome         String // "Rodada 1", "Fase Preliminar", "Oitavas", "Final"...
+  ordem        Int // 0 = fase preliminar (se existir), 1..n = rodadas/fases oficiais
+  preliminar   Boolean     @default(false)
+  status       EtapaStatus @default(ABERTA)
+  createdAt    DateTime    @default(now())
+
+  jogos      Jogo[]
+  confrontos CopaConfronto[]
+
+  @@unique([competicaoId, ordem])
+}
+
+model Jogo {
+  id      String @id @default(cuid())
+  etapaId String
+  etapa   Etapa  @relation(fields: [etapaId], references: [id], onDelete: Cascade)
+
+  // null = jogo "normal", compartilhado por todos os confrontos da etapa
+  // set  = jogo extra (desempate) restrito a um confronto específico
+  confrontoId     String?
+  confronto       CopaConfronto? @relation("ConfrontoJogoExtra", fields: [confrontoId], references: [id])
+  timeCasaId      String
+  timeCasa        Time           @relation("JogoTimeCasa", fields: [timeCasaId], references: [id])
+  timeVisitanteId String
+  timeVisitante   Time           @relation("JogoTimeVisitante", fields: [timeVisitanteId], references: [id])
+  dataHora        DateTime
+  placarCasa      Int?
+  placarVisitante Int?
+  createdAt       DateTime       @default(now())
+
+  palpites Palpite[]
+
+  @@index([etapaId])
+}
+
+model Palpite {
+  id              String        @id @default(cuid())
+  jogoId          String
+  jogo            Jogo          @relation(fields: [jogoId], references: [id], onDelete: Cascade)
+  usuarioId       String
+  usuario         Usuario       @relation(fields: [usuarioId], references: [id])
+  placarCasa      Int
+  placarVisitante Int
+  tipoResultado   ResultadoTipo @default(PENDENTE)
+  pontos          Int           @default(0)
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  @@unique([jogoId, usuarioId])
+  @@index([usuarioId])
+}
+
+// Participante de uma Copa específica (subconjunto dos aprovados na Temporada)
+model CopaParticipante {
+  id           String     @id @default(cuid())
+  competicaoId String
+  competicao   Competicao @relation(fields: [competicaoId], references: [id], onDelete: Cascade)
+  usuarioId    String
+  usuario      Usuario    @relation(fields: [usuarioId], references: [id])
+  seed         Int? // não usado ainda; reservado para distribuição de byes por ranking (v2)
+  ativo        Boolean    @default(true) // false quando eliminado
+  createdAt    DateTime   @default(now())
+
+  confrontosComoA    CopaConfronto[] @relation("ConfrontoParticipanteA")
+  confrontosComoB    CopaConfronto[] @relation("ConfrontoParticipanteB")
+  confrontosVencidos CopaConfronto[] @relation("ConfrontoVencedor")
+
+  @@unique([competicaoId, usuarioId])
+}
+
+// Confronto do chaveamento (usuário vs usuário)
+model CopaConfronto {
+  id      String @id @default(cuid())
+  etapaId String
+  etapa   Etapa  @relation(fields: [etapaId], references: [id], onDelete: Cascade)
+  ordem   Int // posição do confronto dentro da etapa, para renderizar a árvore
+
+  participanteAId String?
+  participanteA   CopaParticipante? @relation("ConfrontoParticipanteA", fields: [participanteAId], references: [id])
+  participanteBId String?
+  participanteB   CopaParticipante? @relation("ConfrontoParticipanteB", fields: [participanteBId], references: [id])
+
+  vencedorId String?
+  vencedor   CopaParticipante? @relation("ConfrontoVencedor", fields: [vencedorId], references: [id])
+
+  // para onde o vencedor avança
+  proximoConfrontoId   String?
+  proximoConfronto     CopaConfronto?  @relation("ConfrontoAvanco", fields: [proximoConfrontoId], references: [id])
+  confrontosAnteriores CopaConfronto[] @relation("ConfrontoAvanco")
+  proximoConfrontoSlot ConfrontoSlot?
+
+  jogosExtra Jogo[] @relation("ConfrontoJogoExtra")
+
+  createdAt DateTime @default(now())
+
+  @@unique([etapaId, ordem])
+  @@index([proximoConfrontoId])
+}
