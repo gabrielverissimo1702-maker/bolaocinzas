@@ -75,7 +75,11 @@ export async function salvarPalpitesLote(
 
   await prisma.$transaction(operacoes);
 
-  await enviarComprovantePalpites(usuario, jogos[0].etapa.nome, itensComprovante);
+  try {
+    await enviarComprovantePalpites(usuario, jogos[0].etapa.nome, itensComprovante);
+  } catch (e) {
+    console.error("Falha ao enviar comprovante por email:", e);
+  }
 
   revalidatePath("/usuario", "layout");
   revalidatePath("/", "layout");
