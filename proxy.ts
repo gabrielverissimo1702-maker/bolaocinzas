@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 const COOKIE_NAME = "bolao_sessao";
-const ROTAS_PUBLICAS = ["/login", "/cadastro"];
+const ROTAS_PUBLICAS = ["/login", "/cadastro", "/verificar-email"];
 
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;

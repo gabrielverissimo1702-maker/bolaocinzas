@@ -71,14 +71,17 @@ enum PadraoUniforme {
 }
 
 model Usuario {
-  id             String         @id @default(cuid())
-  nome           String
-  email          String         @unique
-  senhaHash      String
-  sigla          String         @default("USR")
-  cores          String[]       @default(["#6B7280"])
-  padraoUniforme PadraoUniforme @default(SOLIDO)
-  createdAt      DateTime       @default(now())
+  id                       String         @id @default(cuid())
+  nome                     String
+  email                    String         @unique
+  senhaHash                String
+  sigla                    String         @default("USR")
+  cores                    String[]       @default(["#6B7280"])
+  padraoUniforme           PadraoUniforme @default(SOLIDO)
+  emailVerificado          Boolean        @default(false)
+  tokenVerificacao         String?        @unique
+  tokenVerificacaoExpiraEm DateTime?
+  createdAt                DateTime       @default(now())
 
   savesCriados           Save[]                  @relation("SaveCriador")
   temporadaParticipacoes TemporadaParticipante[]

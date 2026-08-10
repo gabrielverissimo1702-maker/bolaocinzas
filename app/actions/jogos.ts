@@ -64,4 +64,5 @@ export async function removerJogo(jogoId: string, saveId: string, temporadaId: s
   await prisma.jogo.delete({ where: { id: jogoId } });
 
   revalidatePath(`/admin/saves/${saveId}/temporadas/${temporadaId}/competicoes/${competicaoId}`);
+  revalidatePath("/admin/atualizar");
 }

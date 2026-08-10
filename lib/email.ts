@@ -77,3 +77,34 @@ export async function enviarComprovantePalpites(
     html: montarHtml(usuario.nome, etapaNome, itens),
   });
 }
+
+export async function enviarEmailVerificacao(
+  usuario: { nome: string; email: string },
+  token: string
+): Promise<void> {
+  const link = `${process.env.APP_URL}/verificar-email?token=${token}`;
+
+  const t = getTransporter();
+  if (!t) {
+    console.log(`[email não configurado] link de verificação para ${usuario.email}: ${link}`);
+    return;
+  }
+
+  await t.sendMail({
+    from: `Bolão <${process.env.GMAIL_USER}>`,
+    to: usuario.email,
+    subject: "Confirme seu email — Bolão",
+    text: `Olá, ${usuario.nome}!\n\nConfirme seu email clicando no link abaixo (válido por 24 horas):\n${link}\n\nSe você não criou essa conta, ignore esta mensagem.`,
+    html: `
+      <div style="font-family:Arial,Helvetica,sans-serif;max-width:480px;margin:0 auto;">
+        <h2 style="color:#0f172a;">Confirme seu email</h2>
+        <p>Olá, ${usuario.nome}! Falta só um passo para liberar seu acesso ao Bolão.</p>
+        <p style="margin:24px 0;">
+          <a href="${link}" style="background:#0f172a;color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold;">
+            Confirmar meu email
+          </a>
+        </p>
+        <p style="color:#64748b;font-size:12px;">Este link expira em 24 horas. Se você não criou essa conta, ignore esta mensagem.</p>
+      </div>`,
+  });
+}
