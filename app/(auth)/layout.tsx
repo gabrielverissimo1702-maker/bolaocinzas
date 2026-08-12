@@ -3,7 +3,7 @@ import { CinzadosScene } from "@/components/CinzadosScene";
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="dark relative isolate flex min-h-screen w-full items-center justify-center overflow-hidden bg-[#050914] px-4">
+    <div className="dark relative isolate flex min-h-dvh w-full items-center justify-center overflow-hidden bg-[#050914] px-4">
       <CinzadosScene />
       <div className="pointer-events-none fixed inset-0 z-0 bg-slate-950/65 sm:bg-slate-950/50" />
       <div className="relative z-10 w-full max-w-sm">

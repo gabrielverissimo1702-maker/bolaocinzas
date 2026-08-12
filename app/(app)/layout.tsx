@@ -14,15 +14,15 @@ export default async function AppLayout({ children }: { children: React.ReactNod
 
   return (
     <ModoProvider>
-      <div className="dark relative isolate min-h-screen overflow-hidden bg-[#050914]">
+      <div className="dark relative isolate min-h-dvh overflow-hidden bg-[#050914]">
         <CinzadosScene />
         <div className="pointer-events-none fixed inset-0 z-0 bg-slate-950/72 sm:bg-slate-950/58" />
-        <div className="relative z-10 flex min-h-screen">
+        <div className="relative z-10 flex min-h-dvh">
           <div className="hidden md:flex">
             <Sidebar nome={usuario.nome} />
           </div>
 
-          <div className="flex min-h-screen min-w-0 flex-1 flex-col">
+          <div className="flex min-h-dvh min-w-0 flex-1 flex-col">
             <header className="flex items-center justify-between border-b border-slate-800 bg-slate-900/85 px-4 py-3 backdrop-blur-md md:hidden">
               <Logo />
               <form action={sair}>

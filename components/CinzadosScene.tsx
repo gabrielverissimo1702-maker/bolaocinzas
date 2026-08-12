@@ -298,5 +298,5 @@ export function CinzadosScene() {
     };
   }, []);
 
-  return <div ref={mountRef} className="pointer-events-none fixed inset-0 z-0 h-screen w-screen" aria-hidden="true" data-cinzados-three="true" />;
+  return <div ref={mountRef} className="pointer-events-none fixed inset-0 z-0" aria-hidden="true" data-cinzados-three="true" />;
 }
