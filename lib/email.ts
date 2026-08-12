@@ -7,6 +7,14 @@ export interface ItemComprovante {
   placarVisitante: number;
 }
 
+function getAppUrl(): string {
+  if (process.env.APP_URL) return process.env.APP_URL.replace(/\/$/, "");
+  // Vercel expõe essas variáveis automaticamente, sem precisar configurar nada.
+  if (process.env.VERCEL_PROJECT_PRODUCTION_URL) return `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`;
+  if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`;
+  return "http://localhost:3000";
+}
+
 let transporter: ReturnType<typeof nodemailer.createTransport> | null = null;
 
 function getTransporter() {
@@ -82,7 +90,7 @@ export async function enviarEmailVerificacao(
   usuario: { nome: string; email: string },
   token: string
 ): Promise<void> {
-  const link = `${process.env.APP_URL}/verificar-email?token=${token}`;
+  const link = `${getAppUrl()}/verificar-email?token=${token}`;
 
   const t = getTransporter();
   if (!t) {
