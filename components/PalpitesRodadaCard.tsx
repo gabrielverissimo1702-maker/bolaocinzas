@@ -202,9 +202,14 @@ export function PalpitesRodadaCard({
 
               <div className="flex w-full items-center justify-center gap-2 sm:gap-3">
                 <div className="flex min-w-0 flex-1 items-center justify-end gap-1.5">
-                  <span className="truncate text-sm font-bold text-slate-900 dark:text-slate-50">
-                    {jogo.timeCasa.sigla}
-                  </span>
+                  <div className="flex min-w-0 flex-col items-end">
+                    <span className="truncate text-sm font-bold text-slate-900 dark:text-slate-50">
+                      {jogo.timeCasa.sigla}
+                    </span>
+                    <span className="max-w-full truncate text-[10px] text-slate-400 dark:text-slate-500">
+                      {jogo.timeCasa.nome}
+                    </span>
+                  </div>
                   <Jersey {...jogo.timeCasa} size={40} />
                 </div>
 
@@ -244,9 +249,14 @@ export function PalpitesRodadaCard({
 
                 <div className="flex min-w-0 flex-1 items-center gap-1.5">
                   <Jersey {...jogo.timeVisitante} size={40} />
-                  <span className="truncate text-sm font-bold text-slate-900 dark:text-slate-50">
-                    {jogo.timeVisitante.sigla}
-                  </span>
+                  <div className="flex min-w-0 flex-col items-start">
+                    <span className="truncate text-sm font-bold text-slate-900 dark:text-slate-50">
+                      {jogo.timeVisitante.sigla}
+                    </span>
+                    <span className="max-w-full truncate text-[10px] text-slate-400 dark:text-slate-500">
+                      {jogo.timeVisitante.nome}
+                    </span>
+                  </div>
                 </div>
               </div>
 
