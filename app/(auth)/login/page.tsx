@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
+import { Suspense, useActionState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { entrar, reenviarVerificacaoEmail, type AuthActionState, type ReenviarVerificacaoState } from "@/app/actions/auth";
@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/Button";
 const initialState: AuthActionState = {};
 const initialReenvioState: ReenviarVerificacaoState = {};
 
-export default function LoginPage() {
+function LoginContent() {
   const searchParams = useSearchParams();
   const verificado = searchParams.get("verificado") === "1";
 
@@ -63,5 +63,13 @@ export default function LoginPage() {
         </Link>
       </p>
     </>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={null}>
+      <LoginContent />
+    </Suspense>
   );
 }

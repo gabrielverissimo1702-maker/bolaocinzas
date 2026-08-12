@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useRef } from "react";
 import * as THREE from "three";
@@ -49,13 +49,13 @@ export function CinzadosScene() {
     renderer.setClearColor(0x000000, 0);
     container.appendChild(renderer.domElement);
 
-    // --- Luz ambiente + noite de estádio ---
+    // --- Luz ambiente + noite de estÃ¡dio ---
     scene.add(new THREE.AmbientLight(0x2a3550, 0.65));
     const moonLight = new THREE.DirectionalLight(0x8fb8ff, 0.35);
     moonLight.position.set(-4, 10, 6);
     scene.add(moonLight);
 
-    // --- Gramado listrado, se afastando em direção ao gol ---
+    // --- Gramado listrado, se afastando em direÃ§Ã£o ao gol ---
     const pitchGroup = new THREE.Group();
     scene.add(pitchGroup);
 
@@ -91,14 +91,14 @@ export function CinzadosScene() {
     addLine([new THREE.Vector3(PITCH_WIDTH / 2, y, 3), new THREE.Vector3(PITCH_WIDTH / 2, y, 3 - PITCH_LENGTH)]);
     // linha de meio-campo
     addLine([new THREE.Vector3(-PITCH_WIDTH / 2, y, -6), new THREE.Vector3(PITCH_WIDTH / 2, y, -6)]);
-    // círculo central
+    // cÃ­rculo central
     const circle: THREE.Vector3[] = [];
     for (let i = 0; i <= 64; i++) {
       const a = (i / 64) * Math.PI * 2;
       circle.push(new THREE.Vector3(Math.cos(a) * 2.1, y, -6 + Math.sin(a) * 2.1));
     }
     addLine(circle);
-    // grande área perto do gol
+    // grande Ã¡rea perto do gol
     const goalZ = 3 - PITCH_LENGTH;
     addLine([
       new THREE.Vector3(-3.6, y, goalZ + 6.5),
@@ -155,7 +155,7 @@ export function CinzadosScene() {
     }
     netGeometries.forEach((g) => track(g));
 
-    // --- Holofotes do estádio ---
+    // --- Holofotes do estÃ¡dio ---
     const glowTexture = track(makeGlowTexture());
     function makeFloodlight(baseX: number, z: number) {
       const group = new THREE.Group();
@@ -196,7 +196,7 @@ export function CinzadosScene() {
       makeFloodlight(6.8, 3 - PITCH_LENGTH * 0.42),
     ];
 
-    // --- Poeira / luz flutuante no ar do estádio ---
+    // --- Poeira / luz flutuante no ar do estÃ¡dio ---
     const dustCount = 90;
     const dustGeometry = track(new THREE.BufferGeometry());
     const dustPositions = new Float32Array(dustCount * 3);
@@ -222,8 +222,8 @@ export function CinzadosScene() {
     const dust = new THREE.Points(dustGeometry, dustMaterial);
     scene.add(dust);
 
-    // Estado de enquadramento, recalculado continuamente pela proporção da tela
-    // (não por um corte fixo mobile/desktop), pra nunca sobrar vão de um lado.
+    // Estado de enquadramento, recalculado continuamente pela proporÃ§Ã£o da tela
+    // (nÃ£o por um corte fixo mobile/desktop), pra nunca sobrar vÃ£o de um lado.
     const frameState = { baseY: 3.2, lookY: -1, lookZ: -6.5, spread: 1 };
 
     function applyLayout(width: number, height: number) {
@@ -231,7 +231,7 @@ export function CinzadosScene() {
       const aspect = width / Math.max(height, 1);
       camera.aspect = aspect;
 
-      // t=0 em telas bem estreitas (celular em pé), t=1 em telas bem largas (desktop)
+      // t=0 em telas bem estreitas (celular em pÃ©), t=1 em telas bem largas (desktop)
       const t = clamp((aspect - 0.5) / 1.3, 0, 1);
 
       camera.fov = lerp(68, 44, t);
@@ -300,3 +300,4 @@ export function CinzadosScene() {
 
   return <div ref={mountRef} className="pointer-events-none fixed inset-0 z-0" aria-hidden="true" data-cinzados-three="true" />;
 }
+

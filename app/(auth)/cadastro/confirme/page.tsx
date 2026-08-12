@@ -1,13 +1,13 @@
 "use client";
 
-import { useActionState } from "react";
+import { Suspense, useActionState } from "react";
 import { useSearchParams } from "next/navigation";
 import { reenviarVerificacaoEmail, type ReenviarVerificacaoState } from "@/app/actions/auth";
 import { Button } from "@/components/ui/Button";
 
 const initialState: ReenviarVerificacaoState = {};
 
-export default function ConfirmeEmailPage() {
+function ConfirmeEmailContent() {
   const searchParams = useSearchParams();
   const email = searchParams.get("email") ?? "";
   const [state, formAction, pending] = useActionState(reenviarVerificacaoEmail, initialState);
@@ -35,5 +35,13 @@ export default function ConfirmeEmailPage() {
         </Button>
       </form>
     </div>
+  );
+}
+
+export default function ConfirmeEmailPage() {
+  return (
+    <Suspense fallback={null}>
+      <ConfirmeEmailContent />
+    </Suspense>
   );
 }
