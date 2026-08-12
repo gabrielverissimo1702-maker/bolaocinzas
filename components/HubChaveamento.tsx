@@ -2,12 +2,12 @@
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { resumoCopa } from "@/lib/dashboard/resumoUsuario";
-import { jogoEstaTravado } from "@/lib/dashboard/palpitesRevelados";
+import { resumoRodadas } from "@/lib/dashboard/resumoRodadas";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
-import { JogoResumo, type JogoResumoData } from "@/components/JogoResumo";
 import { UsuarioUniforme, type UsuarioUniformeInfo } from "@/components/UsuarioUniforme";
+import { RodadasResumoLista } from "@/components/RodadasResumoLista";
 import { IconArrowRight } from "@/components/ui/icons";
 
 const CORES = {
@@ -56,9 +56,10 @@ export async function HubChaveamento({
   });
   if (!competicao || competicao.tipo !== tipo) notFound();
 
-  const [resumo, usuarioAtual] = await Promise.all([
+  const [resumo, usuarioAtual, rodadas] = await Promise.all([
     resumoCopa(competicaoId, competicao.nome, usuarioId, competicao.status === "ENCERRADA", tipo),
     prisma.usuario.findUnique({ where: { id: usuarioId } }),
+    resumoRodadas(competicaoId),
   ]);
   if (!usuarioAtual) notFound();
 
@@ -85,19 +86,6 @@ export async function HubChaveamento({
   const eu = usuarioInfo(usuarioAtual);
   const jogadorA = souA ? eu : adversario;
   const jogadorB = souA ? adversario : eu;
-
-  let proximosJogos: JogoResumoData[] = [];
-  if (confrontoAtual && resumo.status === "ativo") {
-    const jogosDoConfronto = await prisma.jogo.findMany({
-      where: {
-        placarCasa: null,
-        OR: [{ etapaId: confrontoAtual.etapaId, confrontoId: null }, { confrontoId: confrontoAtual.id }],
-      },
-      orderBy: { dataHora: "asc" },
-      include: { timeCasa: true, timeVisitante: true },
-    });
-    proximosJogos = jogosDoConfronto.filter((j) => !jogoEstaTravado(j.dataHora, j.placarCasa));
-  }
 
   const faseAtual =
     resumo.status === "aguardando_chaveamento"
@@ -181,14 +169,12 @@ export async function HubChaveamento({
           </Link>
         ) : null}
 
-        {proximosJogos.length > 0 && (
-          <div>
-            <p className="mb-2 text-xs font-bold tracking-widest text-slate-500 uppercase dark:text-slate-400">
-              Jogo disponível para palpitar
-            </p>
-            <JogoResumo jogo={proximosJogos[0]} href="/usuario/palpites" compacto />
-          </div>
-        )}
+        <div>
+          <p className="mb-2 text-xs font-bold tracking-widest text-slate-500 uppercase dark:text-slate-400">
+            Jogos a palpitar
+          </p>
+          <RodadasResumoLista rodadas={rodadas} href="/usuario/palpites" />
+        </div>
 
         {visualizacaoHref && (
           <Link href={visualizacaoHref}>

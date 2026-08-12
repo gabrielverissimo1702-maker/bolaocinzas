@@ -25,7 +25,7 @@ export function Sidebar({ nome }: { nome: string }) {
   const links = modo === "USUARIO" ? linksUsuario : linksAdmin;
 
   return (
-    <aside className="flex h-screen w-64 shrink-0 flex-col border-r border-slate-200 bg-white dark:border-slate-800 dark:bg-gradient-to-b dark:from-slate-900 dark:to-slate-950">
+    <aside className="sticky top-0 flex h-screen w-64 shrink-0 flex-col border-r border-slate-200 bg-white dark:border-slate-800 dark:bg-gradient-to-b dark:from-slate-900 dark:to-slate-950">
       <div className="border-b border-slate-200 px-5 py-5 dark:border-slate-800">
         <Logo />
       </div>

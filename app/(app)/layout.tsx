@@ -14,7 +14,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
 
   return (
     <ModoProvider>
-      <div className="dark relative isolate min-h-dvh overflow-hidden bg-[#050914]">
+      <div className="dark relative isolate min-h-dvh bg-[#050914]">
         <CinzadosScene />
         <div className="pointer-events-none fixed inset-0 z-0 bg-slate-950/72 sm:bg-slate-950/58" />
         <div className="relative z-10 flex min-h-dvh">

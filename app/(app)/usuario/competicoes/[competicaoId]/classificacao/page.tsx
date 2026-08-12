@@ -3,13 +3,13 @@ import { notFound } from "next/navigation";
 import { requireUsuario } from "@/lib/auth/session";
 import { prisma } from "@/lib/prisma";
 import { calcularClassificacaoLiga, calcularRodadasCompletas } from "@/lib/scoring/classificacaoLiga";
-import { jogosParaPalpitar } from "@/lib/dashboard/jogosParaPalpitar";
+import { resumoRodadas } from "@/lib/dashboard/resumoRodadas";
 import { jogoEstaTravado } from "@/lib/dashboard/palpitesRevelados";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { LinkButton } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
-import { JogoResumo } from "@/components/JogoResumo";
 import { ClassificacaoTabela } from "@/components/ClassificacaoTabela";
+import { RodadasResumoLista } from "@/components/RodadasResumoLista";
 import { IconArrowRight } from "@/components/ui/icons";
 
 export default async function ClassificacaoPage({
@@ -39,15 +39,14 @@ export default async function ClassificacaoPage({
   });
   if (!participante || participante.status !== "APROVADO") notFound();
 
-  const [classificacao, rodadasInfo, jogosPendentes] = await Promise.all([
+  const [classificacao, rodadasInfo, rodadas] = await Promise.all([
     calcularClassificacaoLiga(competicaoId),
     calcularRodadasCompletas(competicaoId),
-    jogosParaPalpitar(usuario.id, { temporadaId: competicao.temporadaId, apenasPendentes: true }),
+    resumoRodadas(competicaoId),
   ]);
   const minhaPosicao = classificacao.findIndex((l) => l.usuarioId === usuario.id);
   const minhaLinha = minhaPosicao >= 0 ? classificacao[minhaPosicao] : null;
   const top3 = classificacao.slice(0, 3);
-  const jogosDaLiga = jogosPendentes.filter((j) => j.competicaoId === competicaoId);
   const etapaDivulgacao =
     [...competicao.etapas].reverse().find((e) => e.jogos.some((j) => jogoEstaTravado(j.dataHora, j.placarCasa))) ??
     competicao.etapas.find((e) => e.jogos.length > 0);
@@ -102,15 +101,9 @@ export default async function ClassificacaoPage({
       <p className="mb-2 text-xs font-bold tracking-widest text-slate-500 uppercase dark:text-slate-400">
         Jogos a palpitar
       </p>
-      {jogosDaLiga.length === 0 ? (
-        <p className="mb-6 text-sm text-slate-500 dark:text-slate-400">Nenhum jogo pendente de palpite no momento.</p>
-      ) : (
-        <div className="mb-6 flex flex-col gap-3">
-          {jogosDaLiga.map((j) => (
-            <JogoResumo key={j.id} jogo={j} href="/usuario/palpites" compacto />
-          ))}
-        </div>
-      )}
+      <div className="mb-6">
+        <RodadasResumoLista rodadas={rodadas} href="/usuario/palpites" />
+      </div>
 
       <Link href={divulgacaoHref}>
         <Card className="flex items-center justify-between rounded-2xl border-slate-800 bg-gradient-to-b from-slate-900 to-slate-950 shadow-lg shadow-black/30 transition hover:border-slate-600 dark:border-slate-800 dark:bg-gradient-to-b dark:from-slate-900 dark:to-slate-950 dark:hover:border-slate-600">
