@@ -3,15 +3,10 @@
 import { Jersey } from "@/components/ui/Jersey";
 import type { JogoResumoData } from "@/components/JogoResumo";
 import { removerJogo } from "@/app/actions/jogos";
+import { paraDatetimeLocalBrasilia } from "@/lib/timezone";
 
 const scoreInputClass =
   "w-7 min-w-0 bg-transparent text-center text-base font-extrabold text-white outline-none [appearance:textfield] sm:text-lg [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none";
-
-function paraDatetimeLocal(dataHora: Date | string) {
-  const d = new Date(dataHora);
-  const pad = (n: number) => String(n).padStart(2, "0");
-  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
-}
 
 export function AdminJogoCard({
   jogo,
@@ -42,7 +37,7 @@ export function AdminJogoCard({
         <input
           type="datetime-local"
           name={`dataHora_${jogo.id}`}
-          defaultValue={paraDatetimeLocal(jogo.dataHora)}
+          defaultValue={paraDatetimeLocalBrasilia(jogo.dataHora)}
           className="rounded-md border border-slate-700/60 bg-slate-900/70 px-1.5 py-0.5 text-[11px] font-semibold text-slate-300 outline-none focus:border-emerald-500"
         />
       </div>

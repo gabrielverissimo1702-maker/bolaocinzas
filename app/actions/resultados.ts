@@ -6,6 +6,7 @@ import { requireUsuario } from "@/lib/auth/session";
 import { requireSaveOwner } from "@/lib/auth/authorization";
 import { lancarResultadoSchema } from "@/lib/validation/resultados";
 import { recalcularPalpitesDoJogo } from "@/lib/scoring/recalcularPalpitesDoJogo";
+import { parseDataHoraBrasilia } from "@/lib/timezone";
 
 export type ResultadosActionState = { error?: string };
 export type AtualizarJogosState = { error?: string; success?: boolean };
@@ -107,7 +108,7 @@ export async function atualizarJogosLote(
     }
 
     if (typeof rawDataHora === "string" && rawDataHora !== "") {
-      const novaData = new Date(rawDataHora);
+      const novaData = parseDataHoraBrasilia(rawDataHora);
       if (!Number.isNaN(novaData.getTime()) && novaData.getTime() !== new Date(jogo.dataHora).getTime()) {
         data.dataHora = novaData;
       }

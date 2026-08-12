@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { requireUsuario } from "@/lib/auth/session";
 import { requireSaveOwner } from "@/lib/auth/authorization";
 import { criarJogoSchema } from "@/lib/validation/jogos";
+import { parseDataHoraBrasilia } from "@/lib/timezone";
 
 export type JogosActionState = { error?: string };
 
@@ -49,7 +50,7 @@ export async function criarJogo(
       etapaId: parsed.data.etapaId,
       timeCasaId: parsed.data.timeCasaId,
       timeVisitanteId: parsed.data.timeVisitanteId,
-      dataHora: new Date(parsed.data.dataHora),
+      dataHora: parseDataHoraBrasilia(parsed.data.dataHora),
     },
   });
 

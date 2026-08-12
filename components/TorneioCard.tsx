@@ -3,10 +3,11 @@ import { TipoTag } from "@/components/ui/TipoTag";
 import { ProgressoCircular } from "@/components/ui/ProgressoCircular";
 import { IconTrophy, IconCalendar } from "@/components/ui/icons";
 import type { TorneioResumo } from "@/lib/dashboard/torneiosUsuario";
+import { TIMEZONE_BRASIL } from "@/lib/timezone";
 
 function formatarData(data: Date | null) {
   if (!data) return "Sem jogos";
-  return new Date(data).toLocaleDateString("pt-BR", { day: "2-digit", month: "short" });
+  return new Date(data).toLocaleDateString("pt-BR", { day: "2-digit", month: "short", timeZone: TIMEZONE_BRASIL });
 }
 
 export function TorneioCard({ torneio }: { torneio: TorneioResumo }) {

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Jersey } from "@/components/ui/Jersey";
+import { TIMEZONE_BRASIL } from "@/lib/timezone";
 
 export interface TimeResumo {
   nome: string;
@@ -19,8 +20,17 @@ export interface JogoResumoData {
 
 function formatarData(dataHora: Date | string) {
   const data = new Date(dataHora);
-  const dia = data.toLocaleDateString("pt-BR", { weekday: "short", day: "2-digit", month: "short" });
-  const hora = data.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+  const dia = data.toLocaleDateString("pt-BR", {
+    weekday: "short",
+    day: "2-digit",
+    month: "short",
+    timeZone: TIMEZONE_BRASIL,
+  });
+  const hora = data.toLocaleTimeString("pt-BR", {
+    hour: "2-digit",
+    minute: "2-digit",
+    timeZone: TIMEZONE_BRASIL,
+  });
   return `${dia} · ${hora}`;
 }
 

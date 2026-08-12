@@ -4,6 +4,7 @@ import { PageHeader } from "@/components/ui/PageHeader";
 import { Card } from "@/components/ui/Card";
 import { LinkButton } from "@/components/ui/Button";
 import { TipoTag } from "@/components/ui/TipoTag";
+import { TIMEZONE_BRASIL } from "@/lib/timezone";
 
 function formatarPrazo(data: Date | null) {
   if (!data) return "Sem horário";
@@ -12,6 +13,7 @@ function formatarPrazo(data: Date | null) {
     month: "short",
     hour: "2-digit",
     minute: "2-digit",
+    timeZone: TIMEZONE_BRASIL,
   }).format(data);
 }
 

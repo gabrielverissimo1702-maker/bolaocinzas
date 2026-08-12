@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/Button";
 import { Jersey } from "@/components/ui/Jersey";
 import { UsuarioUniforme } from "@/components/UsuarioUniforme";
 import { IconChevronLeft, IconChevronRight } from "@/components/ui/icons";
+import { TIMEZONE_BRASIL } from "@/lib/timezone";
 
 const initialState: PalpitesActionState = {};
 
@@ -250,7 +251,7 @@ export function PalpitesRodadaCard({
               </div>
 
               <span className="text-xs text-slate-400 dark:text-slate-500">
-                {new Date(jogo.dataHora).toLocaleString("pt-BR")}
+                {new Date(jogo.dataHora).toLocaleString("pt-BR", { timeZone: TIMEZONE_BRASIL })}
               </span>
 
 

@@ -2,17 +2,13 @@ import { notFound } from "next/navigation";
 import { requireUsuario } from "@/lib/auth/session";
 import { requireSaveOwner } from "@/lib/auth/authorization";
 import { prisma } from "@/lib/prisma";
-import { removerJogo } from "@/app/actions/jogos";
 import { pontosDosConfrontos } from "@/lib/copa/pontosConfrontos";
-import { ResultadoForm } from "@/components/admin/ResultadoForm";
 import { ChaveamentoAdmin, type EtapaAdminView, type ParticipanteAdmin } from "./ChaveamentoAdmin";
 import { EncerrarLigaButton } from "./EncerrarLigaButton";
 import { PageHeader } from "@/components/ui/PageHeader";
-import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { LinkButton } from "@/components/ui/Button";
 import { IconPlus } from "@/components/ui/icons";
-import { JogoResumo } from "@/components/JogoResumo";
 
 const TIPO_LABEL: Record<string, string> = {
   LIGA: "Liga",
@@ -160,40 +156,9 @@ export default async function CompeticaoDetailPage({
         </div>
       )}
 
-      <div className="flex flex-col gap-4">
-        {competicao.etapas.map((etapa) => (
-          <Card key={etapa.id}>
-            <div className="flex items-center justify-between">
-              <p className="font-semibold text-slate-900 dark:text-slate-50">{etapa.nome}</p>
-              {etapa.status === "FECHADA" && <Badge tone="neutral">Fechada</Badge>}
-            </div>
-
-            <div className="mt-3 flex flex-col gap-3">
-              {etapa.jogos.map((jogo) => (
-                <div key={jogo.id} className="flex flex-col gap-2">
-                  <JogoResumo jogo={jogo} compacto />
-                  <div className="flex items-center justify-end gap-3 text-sm">
-                    {jogo.placarCasa == null && <ResultadoForm jogoId={jogo.id} saveId={saveId} />}
-                    <form action={removerJogo.bind(null, jogo.id, saveId, temporadaId, competicaoId)}>
-                      <button type="submit" className="text-red-600 hover:underline dark:text-red-400">
-                        Remover
-                      </button>
-                    </form>
-                  </div>
-                </div>
-              ))}
-              {etapa.jogos.length === 0 && (
-                <p className="text-sm text-slate-400 dark:text-slate-500">Nenhum jogo cadastrado.</p>
-              )}
-            </div>
-          </Card>
-        ))}
-        {competicao.etapas.length === 0 && (
-          <p className="text-sm text-slate-500 dark:text-slate-400">
-            {usaChaveamento ? "Gere o chaveamento para criar as etapas." : "Nenhuma etapa disponível ainda."}
-          </p>
-        )}
-      </div>
+      {usaChaveamento && etapasAdmin.length === 0 && (
+        <p className="text-sm text-slate-500 dark:text-slate-400">Gere o chaveamento para criar as etapas.</p>
+      )}
     </div>
   );
 }
