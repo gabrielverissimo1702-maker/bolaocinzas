@@ -17,6 +17,7 @@ enum CompeticaoTipo {
 }
 
 enum CompeticaoStatus {
+  RASCUNHO
   EM_ANDAMENTO
   ENCERRADA
 }
@@ -165,7 +166,7 @@ model Competicao {
   temporada   Temporada        @relation(fields: [temporadaId], references: [id], onDelete: Cascade)
   tipo        CompeticaoTipo
   nome        String
-  status      CompeticaoStatus @default(EM_ANDAMENTO)
+  status      CompeticaoStatus @default(RASCUNHO)
 
   // Compartilhado (Liga/Copa/Supercopa)
   pontosCravada     Int

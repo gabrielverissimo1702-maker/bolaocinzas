@@ -25,12 +25,7 @@ function calcularStatus(
   return { status: "disponivel", feitos, total };
 }
 
-/**
- * Retorna uma janela de etapas (rodadas/fases) em torno do ponto atual da
- * competição: a última finalizada, a atual e a próxima — priorizando o que é
- * relevante para palpitar agora, não simplesmente as N primeiras ou últimas.
- */
-export async function resumoRodadas(competicaoId: string, limite = 3): Promise<RodadaResumo[]> {
+async function calcularTodasRodadas(competicaoId: string): Promise<RodadaResumo[]> {
   const etapas = await prisma.etapa.findMany({
     where: { competicaoId },
     orderBy: { ordem: "asc" },
@@ -38,7 +33,16 @@ export async function resumoRodadas(competicaoId: string, limite = 3): Promise<R
   });
 
   const agora = Date.now();
-  const calculadas = etapas.map((e) => ({ id: e.id, nome: e.nome, ...calcularStatus(e.jogos, agora) }));
+  return etapas.map((e) => ({ id: e.id, nome: e.nome, ...calcularStatus(e.jogos, agora) }));
+}
+
+/**
+ * Retorna uma janela de etapas (rodadas/fases) em torno do ponto atual da
+ * competição: a última finalizada, a atual e a próxima — priorizando o que é
+ * relevante para palpitar agora, não simplesmente as N primeiras ou últimas.
+ */
+export async function resumoRodadas(competicaoId: string, limite = 3): Promise<RodadaResumo[]> {
+  const calculadas = await calcularTodasRodadas(competicaoId);
 
   const primeiraNaoFinalizada = calculadas.findIndex((e) => e.status !== "finalizada");
   const inicio =
@@ -47,4 +51,9 @@ export async function resumoRodadas(competicaoId: string, limite = 3): Promise<R
       : Math.max(0, primeiraNaoFinalizada - 1);
 
   return calculadas.slice(inicio, inicio + limite);
+}
+
+/** Todas as etapas da competição, sem janelar — usado no hub do admin. */
+export async function resumoRodadasCompleto(competicaoId: string): Promise<RodadaResumo[]> {
+  return calcularTodasRodadas(competicaoId);
 }

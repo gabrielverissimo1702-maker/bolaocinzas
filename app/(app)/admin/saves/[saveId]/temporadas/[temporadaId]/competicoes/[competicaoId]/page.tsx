@@ -3,12 +3,14 @@ import { requireUsuario } from "@/lib/auth/session";
 import { requireSaveOwner } from "@/lib/auth/authorization";
 import { prisma } from "@/lib/prisma";
 import { pontosDosConfrontos } from "@/lib/copa/pontosConfrontos";
+import { resumoRodadasCompleto } from "@/lib/dashboard/resumoRodadas";
 import { ChaveamentoAdmin, type EtapaAdminView, type ParticipanteAdmin } from "./ChaveamentoAdmin";
-import { EncerrarLigaButton } from "./EncerrarLigaButton";
+import { IniciarEncerrarBotoes } from "@/components/admin/IniciarEncerrarBotoes";
+import { RodadasResumoLista } from "@/components/RodadasResumoLista";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { Badge } from "@/components/ui/Badge";
 import { LinkButton } from "@/components/ui/Button";
-import { IconPlus } from "@/components/ui/icons";
+import { IconPlus, IconRefresh } from "@/components/ui/icons";
 
 const TIPO_LABEL: Record<string, string> = {
   LIGA: "Liga",
@@ -33,11 +35,6 @@ export default async function CompeticaoDetailPage({
       etapas: {
         orderBy: { ordem: "asc" },
         include: {
-          jogos: {
-            where: { confrontoId: null },
-            orderBy: { dataHora: "asc" },
-            include: { timeCasa: true, timeVisitante: true },
-          },
           confrontos: {
             orderBy: { ordem: "asc" },
             include: {
@@ -56,6 +53,8 @@ export default async function CompeticaoDetailPage({
 
   const totalConfrontos = competicao.etapas.reduce((acc, e) => acc + e.confrontos.length, 0);
   const usaChaveamento = competicao.tipo === "COPA" || competicao.tipo === "SUPERCOPA";
+
+  const rodadas = await resumoRodadasCompleto(competicaoId);
 
   let etapasAdmin: EtapaAdminView[] = [];
   let candidatosDisponiveis: ParticipanteAdmin[] = [];
@@ -128,25 +127,12 @@ export default async function CompeticaoDetailPage({
         backLabel="Voltar"
         subtitle={`${TIPO_LABEL[competicao.tipo]} · Cravada: ${competicao.pontosCravada}pts · Acerto: ${competicao.pontosAcerto}pts`}
         action={
-          <div className="flex gap-2">
-            {competicao.tipo === "LIGA" && !competicao.campeaoUsuarioId && (
-              <EncerrarLigaButton saveId={saveId} competicaoId={competicaoId} />
-            )}
-            {usaChaveamento && totalConfrontos === 0 && (
-              <LinkButton
-                variant="outline"
-                href={`/admin/saves/${saveId}/temporadas/${temporadaId}/competicoes/${competicaoId}/copa/gerar-confrontos`}
-              >
-                Gerar Confrontos
-              </LinkButton>
-            )}
-            {(!usaChaveamento || totalConfrontos > 0) && (
-              <LinkButton href={`/admin/saves/${saveId}/temporadas/${temporadaId}/competicoes/${competicaoId}/jogos/novo`}>
-                <IconPlus className="h-4 w-4" />
-                Cadastrar jogo
-              </LinkButton>
-            )}
-          </div>
+          <IniciarEncerrarBotoes
+            saveId={saveId}
+            competicaoId={competicaoId}
+            tipo={competicao.tipo}
+            status={competicao.status}
+          />
         }
       />
 
@@ -156,14 +142,39 @@ export default async function CompeticaoDetailPage({
         </div>
       )}
 
+      <p className="mb-2 text-xs font-bold tracking-widest text-slate-500 uppercase dark:text-slate-400">
+        {competicao.tipo === "LIGA" ? "Rodadas" : "Fases"}
+      </p>
+      <div className="mb-4">
+        <RodadasResumoLista rodadas={rodadas} />
+      </div>
+
+      <div className="mb-6 flex flex-wrap gap-2">
+        {(!usaChaveamento || totalConfrontos > 0) && (
+          <LinkButton href={`/admin/saves/${saveId}/temporadas/${temporadaId}/competicoes/${competicaoId}/jogos/novo`}>
+            <IconPlus className="h-4 w-4" />
+            Cadastrar jogo
+          </LinkButton>
+        )}
+        <LinkButton variant="outline" href="/admin/atualizar">
+          <IconRefresh className="h-4 w-4" />
+          Atualizar jogos
+        </LinkButton>
+      </div>
+
+      {usaChaveamento && totalConfrontos === 0 && (
+        <LinkButton
+          variant="outline"
+          href={`/admin/saves/${saveId}/temporadas/${temporadaId}/competicoes/${competicaoId}/copa/gerar-confrontos`}
+        >
+          Gerar Confrontos
+        </LinkButton>
+      )}
+
       {usaChaveamento && etapasAdmin.length > 0 && (
         <div className="mb-6">
           <ChaveamentoAdmin etapas={etapasAdmin} candidatos={candidatosDisponiveis} saveId={saveId} />
         </div>
-      )}
-
-      {usaChaveamento && etapasAdmin.length === 0 && (
-        <p className="text-sm text-slate-500 dark:text-slate-400">Gere o chaveamento para criar as etapas.</p>
       )}
     </div>
   );

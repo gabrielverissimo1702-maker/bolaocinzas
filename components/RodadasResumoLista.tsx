@@ -17,16 +17,18 @@ const STATUS_TONE: Record<StatusRodada, "success" | "info" | "warning" | "neutra
   aguardando_jogos: "warning",
 };
 
-export function RodadasResumoLista({ rodadas, href }: { rodadas: RodadaResumo[]; href: string }) {
+export function RodadasResumoLista({ rodadas, href }: { rodadas: RodadaResumo[]; href?: string }) {
   if (rodadas.length === 0) {
     return <p className="text-sm text-slate-500 dark:text-slate-400">Nenhuma rodada cadastrada ainda.</p>;
   }
 
   return (
     <div className="flex flex-col gap-2">
-      {rodadas.map((r) => (
-        <Link key={r.id} href={href}>
-          <Card className="flex items-center justify-between py-3 transition hover:border-slate-400 dark:hover:border-slate-600">
+      {rodadas.map((r) => {
+        const conteudo = (
+          <Card
+            className={`flex items-center justify-between py-3 ${href ? "transition hover:border-slate-400 dark:hover:border-slate-600" : ""}`}
+          >
             <p className="font-medium text-slate-900 dark:text-slate-50">{r.nome}</p>
             <div className="flex items-center gap-3">
               <Badge tone={STATUS_TONE[r.status]}>{STATUS_LABEL[r.status]}</Badge>
@@ -35,8 +37,15 @@ export function RodadasResumoLista({ rodadas, href }: { rodadas: RodadaResumo[];
               </span>
             </div>
           </Card>
-        </Link>
-      ))}
+        );
+        return href ? (
+          <Link key={r.id} href={href}>
+            {conteudo}
+          </Link>
+        ) : (
+          <div key={r.id}>{conteudo}</div>
+        );
+      })}
     </div>
   );
 }

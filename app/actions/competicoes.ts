@@ -114,3 +114,36 @@ export async function encerrarLiga(saveId: string, competicaoId: string): Promis
   revalidatePath(`/admin/saves/${saveId}/temporadas/${competicao.temporadaId}/competicoes/${competicaoId}`);
   return { campeaoNome: campeao.nome };
 }
+
+export type StatusActionResult = { error?: string };
+
+export async function iniciarCompeticao(saveId: string, competicaoId: string): Promise<StatusActionResult> {
+  const usuario = await requireUsuario();
+  await requireSaveOwner(saveId, usuario.id);
+
+  const competicao = await prisma.competicao.findUniqueOrThrow({ where: { id: competicaoId } });
+  if (competicao.status !== "RASCUNHO") return { error: "Esta competição já foi iniciada" };
+
+  await prisma.competicao.update({ where: { id: competicaoId }, data: { status: "EM_ANDAMENTO" } });
+
+  revalidatePath(`/admin/saves/${saveId}/temporadas/${competicao.temporadaId}/competicoes/${competicaoId}`);
+  return {};
+}
+
+// Encerramento manual pra Copa/Supercopa — na prática o chaveamento já encerra
+// sozinho quando a final é decidida (ver fecharEtapa); isso serve de fallback
+// pro admin, exigindo que já exista campeão definido.
+export async function encerrarCopaSupercopa(saveId: string, competicaoId: string): Promise<StatusActionResult> {
+  const usuario = await requireUsuario();
+  await requireSaveOwner(saveId, usuario.id);
+
+  const competicao = await prisma.competicao.findUniqueOrThrow({ where: { id: competicaoId } });
+  if (competicao.tipo === "LIGA") return { error: "Esta competição é uma Liga" };
+  if (competicao.status === "ENCERRADA") return { error: "Esta competição já está encerrada" };
+  if (!competicao.campeaoUsuarioId) return { error: "Ainda não há campeão definido no chaveamento" };
+
+  await prisma.competicao.update({ where: { id: competicaoId }, data: { status: "ENCERRADA" } });
+
+  revalidatePath(`/admin/saves/${saveId}/temporadas/${competicao.temporadaId}/competicoes/${competicaoId}`);
+  return {};
+}

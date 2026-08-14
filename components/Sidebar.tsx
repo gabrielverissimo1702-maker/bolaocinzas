@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Logo } from "./ui/Logo";
-import { IconHome, IconLayers, IconTrophy, IconPlus, IconRefresh, IconUser, IconLogOut } from "./ui/icons";
+import { IconHome, IconLayers, IconTrophy, IconTarget, IconUser, IconLogOut } from "./ui/icons";
 import { sair } from "@/app/actions/auth";
 import { useModo } from "@/lib/ModoContext";
 
@@ -15,8 +15,8 @@ const linksUsuario = [
 
 const linksAdmin = [
   { href: "/", label: "Início", icon: IconHome },
-  { href: "/admin/saves", label: "Adicionar", icon: IconPlus },
-  { href: "/admin/atualizar", label: "Atualizar", icon: IconRefresh },
+  { href: "/admin/saves", label: "Saves", icon: IconLayers },
+  { href: "/admin/jogos", label: "Jogos", icon: IconTarget },
 ];
 
 export function Sidebar({ nome }: { nome: string }) {

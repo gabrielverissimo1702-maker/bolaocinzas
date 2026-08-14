@@ -7,7 +7,7 @@ import { requireSaveOwner } from "@/lib/auth/authorization";
 import { criarJogoSchema } from "@/lib/validation/jogos";
 import { parseDataHoraBrasilia } from "@/lib/timezone";
 
-export type JogosActionState = { error?: string };
+export type JogosActionState = { error?: string; success?: boolean };
 
 export async function criarJogo(
   _prevState: JogosActionState,
@@ -55,7 +55,8 @@ export async function criarJogo(
   });
 
   revalidatePath(`/admin/saves/${saveId}/temporadas/${temporadaId}/competicoes/${competicaoId}`);
-  return {};
+  revalidatePath("/admin/atualizar");
+  return { success: true };
 }
 
 export async function removerJogo(jogoId: string, saveId: string, temporadaId: string, competicaoId: string) {

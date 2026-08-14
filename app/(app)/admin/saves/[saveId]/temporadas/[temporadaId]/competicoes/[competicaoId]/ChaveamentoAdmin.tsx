@@ -4,7 +4,7 @@ import { useState, useTransition } from "react";
 import { atribuirParticipanteSlot } from "@/app/actions/copa";
 import { UsuarioUniforme, type UsuarioUniformeInfo } from "@/components/UsuarioUniforme";
 import { Badge } from "@/components/ui/Badge";
-import { IconPlus, IconX } from "@/components/ui/icons";
+import { IconPlus, IconX, IconChevronLeft, IconChevronRight } from "@/components/ui/icons";
 import { FecharEtapaButton } from "./FecharEtapaButton";
 
 export type ParticipanteAdmin = UsuarioUniformeInfo & { copaParticipanteId: string };
@@ -115,6 +115,63 @@ function SlotRow({
   );
 }
 
+function ConteudoEtapa({
+  etapa,
+  candidatos,
+  atribuir,
+  pending,
+  saveId,
+}: {
+  etapa: EtapaAdminView;
+  candidatos: ParticipanteAdmin[];
+  atribuir: (confrontoId: string, slot: "A" | "B", copaParticipanteId: string | null) => void;
+  pending: boolean;
+  saveId: string;
+}) {
+  return (
+    <>
+      <div className="flex items-center justify-between gap-2">
+        <p className="text-sm font-semibold text-slate-700 dark:text-slate-300">{etapa.nome}</p>
+        {etapa.status === "FECHADA" ? (
+          <Badge tone="neutral">Fechada</Badge>
+        ) : etapa.confrontos.length > 0 ? (
+          <FecharEtapaButton saveId={saveId} etapaId={etapa.id} />
+        ) : null}
+      </div>
+
+      <div className="flex flex-1 flex-col justify-around gap-4">
+        {etapa.confrontos.map((c) => (
+          <div
+            key={c.id}
+            className="rounded-lg border border-slate-200 bg-white p-2 text-sm dark:border-slate-800 dark:bg-gradient-to-b dark:from-slate-900 dark:to-slate-950"
+          >
+            <SlotRow
+              participante={c.participanteA}
+              pontos={c.pontosA}
+              venceu={c.aVenceu}
+              candidatos={candidatos}
+              onAtribuir={(id) => atribuir(c.id, "A", id)}
+              pending={pending}
+            />
+            <div className="my-0.5 border-t border-slate-100 dark:border-slate-800" />
+            <SlotRow
+              participante={c.participanteB}
+              pontos={c.pontosB}
+              venceu={c.bVenceu}
+              candidatos={candidatos}
+              onAtribuir={(id) => atribuir(c.id, "B", id)}
+              pending={pending}
+            />
+          </div>
+        ))}
+        {etapa.confrontos.length === 0 && (
+          <p className="text-xs text-slate-400 dark:text-slate-500">Nenhum confronto.</p>
+        )}
+      </div>
+    </>
+  );
+}
+
 export function ChaveamentoAdmin({
   etapas,
   candidatos,
@@ -127,6 +184,13 @@ export function ChaveamentoAdmin({
   const [pending, startTransition] = useTransition();
   const [erro, setErro] = useState<string | null>(null);
 
+  const indiceInicial = (() => {
+    const aberta = etapas.findIndex((e) => e.status !== "FECHADA");
+    return aberta === -1 ? etapas.length - 1 : aberta;
+  })();
+  const [indice, setIndice] = useState(indiceInicial);
+  const etapaAtual = etapas[indice];
+
   function atribuir(confrontoId: string, slot: "A" | "B", copaParticipanteId: string | null) {
     setErro(null);
     startTransition(async () => {
@@ -137,50 +201,46 @@ export function ChaveamentoAdmin({
 
   return (
     <div>
-      <div className="flex gap-6 overflow-x-auto pb-4">
+      {/* Mobile: uma fase por vez, mesmo modelo do chaveamento do usuário */}
+      <div className="flex min-w-0 flex-col gap-3 md:hidden">
+        <div className="flex items-center justify-between gap-2">
+          <button
+            type="button"
+            onClick={() => setIndice((i) => Math.max(0, i - 1))}
+            disabled={indice === 0}
+            aria-label="Fase anterior"
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-slate-200 text-slate-500 disabled:opacity-30 dark:border-slate-800 dark:text-slate-400"
+          >
+            <IconChevronLeft className="h-4 w-4" />
+          </button>
+          <p className="min-w-0 flex-1 truncate text-center text-sm font-bold tracking-wide text-slate-700 uppercase dark:text-slate-200">
+            {etapaAtual?.nome}
+          </p>
+          <button
+            type="button"
+            onClick={() => setIndice((i) => Math.min(etapas.length - 1, i + 1))}
+            disabled={indice === etapas.length - 1}
+            aria-label="Próxima fase"
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-slate-200 text-slate-500 disabled:opacity-30 dark:border-slate-800 dark:text-slate-400"
+          >
+            <IconChevronRight className="h-4 w-4" />
+          </button>
+        </div>
+
+        {etapaAtual && (
+          <ConteudoEtapa etapa={etapaAtual} candidatos={candidatos} atribuir={atribuir} pending={pending} saveId={saveId} />
+        )}
+      </div>
+
+      {/* Desktop: todas as fases lado a lado, com scroll horizontal */}
+      <div className="hidden gap-6 overflow-x-auto pb-4 md:flex">
         {etapas.map((etapa) => (
           <div key={etapa.id} className="flex w-64 shrink-0 flex-col gap-3">
-            <div className="flex items-center justify-between gap-2">
-              <p className="text-sm font-semibold text-slate-700 dark:text-slate-300">{etapa.nome}</p>
-              {etapa.status === "FECHADA" ? (
-                <Badge tone="neutral">Fechada</Badge>
-              ) : etapa.confrontos.length > 0 ? (
-                <FecharEtapaButton saveId={saveId} etapaId={etapa.id} />
-              ) : null}
-            </div>
-
-            <div className="flex flex-1 flex-col justify-around gap-4">
-              {etapa.confrontos.map((c) => (
-                <div
-                  key={c.id}
-                  className="rounded-lg border border-slate-200 bg-white p-2 text-sm dark:border-slate-800 dark:bg-gradient-to-b dark:from-slate-900 dark:to-slate-950"
-                >
-                  <SlotRow
-                    participante={c.participanteA}
-                    pontos={c.pontosA}
-                    venceu={c.aVenceu}
-                    candidatos={candidatos}
-                    onAtribuir={(id) => atribuir(c.id, "A", id)}
-                    pending={pending}
-                  />
-                  <div className="my-0.5 border-t border-slate-100 dark:border-slate-800" />
-                  <SlotRow
-                    participante={c.participanteB}
-                    pontos={c.pontosB}
-                    venceu={c.bVenceu}
-                    candidatos={candidatos}
-                    onAtribuir={(id) => atribuir(c.id, "B", id)}
-                    pending={pending}
-                  />
-                </div>
-              ))}
-              {etapa.confrontos.length === 0 && (
-                <p className="text-xs text-slate-400 dark:text-slate-500">Nenhum confronto.</p>
-              )}
-            </div>
+            <ConteudoEtapa etapa={etapa} candidatos={candidatos} atribuir={atribuir} pending={pending} saveId={saveId} />
           </div>
         ))}
       </div>
+
       {erro && <p className="text-sm text-red-600 dark:text-red-400">{erro}</p>}
     </div>
   );
