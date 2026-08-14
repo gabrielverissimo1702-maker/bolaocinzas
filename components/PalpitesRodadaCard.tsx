@@ -265,7 +265,7 @@ export function PalpitesRodadaCard({
               </span>
 
 
-              {travado && jogo.palpitesRevelados && meuUsuarioId && (
+              {somenteLeitura && travado && jogo.palpitesRevelados && meuUsuarioId && (
                 <div className="mt-2 w-full">
                   <p className="mb-2 text-center text-[11px] font-bold tracking-widest text-slate-400 uppercase dark:text-slate-500">
                     Palpites da rodada

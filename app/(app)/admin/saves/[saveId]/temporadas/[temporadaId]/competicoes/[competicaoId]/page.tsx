@@ -63,14 +63,20 @@ export default async function CompeticaoDetailPage({
   if (usaChaveamento && totalConfrontos > 0) {
     const pontosDoParticipante = await pontosDosConfrontos(competicao.etapas);
 
+    // Só conta como "alocado" quem ocupa um slot numa etapa ainda ABERTA — uma vez
+    // que a etapa fecha, o vencedor fica livre pra ser posicionado manualmente na
+    // próxima fase (junto com quem já tinha bye), em vez de ficar preso pra sempre
+    // ao confronto histórico que já disputou.
     const idsAlocados = new Set(
-      competicao.etapas.flatMap((e) =>
-        e.confrontos.flatMap((c) => [c.participanteAId, c.participanteBId].filter((id): id is string => !!id))
-      )
+      competicao.etapas
+        .filter((e) => e.status === "ABERTA")
+        .flatMap((e) =>
+          e.confrontos.flatMap((c) => [c.participanteAId, c.participanteBId].filter((id): id is string => !!id))
+        )
     );
 
     candidatosDisponiveis = competicao.copaParticipantes
-      .filter((p) => !idsAlocados.has(p.id))
+      .filter((p) => p.ativo && !idsAlocados.has(p.id))
       .map((p) => ({
         copaParticipanteId: p.id,
         nome: p.usuario.nome,

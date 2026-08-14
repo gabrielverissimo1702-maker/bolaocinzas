@@ -160,13 +160,10 @@ export async function fecharEtapa(etapaId: string): Promise<FecharEtapaResultado
       prisma.copaParticipante.update({ where: { id: perdedorId }, data: { ativo: false } }),
     ]);
 
-    if (confronto.proximoConfrontoId && confronto.proximoConfrontoSlot) {
-      await prisma.copaConfronto.update({
-        where: { id: confronto.proximoConfrontoId },
-        data:
-          confronto.proximoConfrontoSlot === "A" ? { participanteAId: vencedorId } : { participanteBId: vencedorId },
-      });
-    } else if (!confronto.proximoConfrontoId) {
+    // O vencedor NÃO é auto-encaminhado pro próximo confronto — fica disponível
+    // como candidato pro admin posicionar livremente via "Adicionar" (ver
+    // atribuirParticipanteSlot), inclusive junto com quem já tinha bye.
+    if (!confronto.proximoConfrontoId) {
       const vencedor = await prisma.copaParticipante.findUniqueOrThrow({ where: { id: vencedorId } });
       await prisma.competicao.update({
         where: { id: etapa.competicaoId },

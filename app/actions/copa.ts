@@ -118,7 +118,7 @@ export async function atribuirParticipanteSlot(
     const jaAlocado = await prisma.copaConfronto.findFirst({
       where: {
         id: { not: confrontoId },
-        etapa: { competicaoId: confronto.etapa.competicaoId },
+        etapa: { competicaoId: confronto.etapa.competicaoId, status: "ABERTA" },
         OR: [{ participanteAId: copaParticipanteId }, { participanteBId: copaParticipanteId }],
       },
     });

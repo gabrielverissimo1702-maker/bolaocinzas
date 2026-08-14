@@ -81,7 +81,7 @@ export async function cardsParaPalpitar(usuarioId: string): Promise<PalpitesHubC
       };
     })
     .sort((a, b) => (a.prazo?.getTime() ?? 0) - (b.prazo?.getTime() ?? 0))
-    .slice(0, 8);
+    .slice(0, 3);
 }
 
 export async function opcoesConsultaPalpites(usuarioId: string): Promise<PalpitesFiltroOpcao[]> {
@@ -172,5 +172,5 @@ export async function cardsParaVerPalpites(usuarioId: string): Promise<PalpitesH
     }
   }
 
-  return cards.sort((a, b) => (b.prazo?.getTime() ?? 0) - (a.prazo?.getTime() ?? 0)).slice(0, 8);
+  return cards.sort((a, b) => (b.prazo?.getTime() ?? 0) - (a.prazo?.getTime() ?? 0)).slice(0, 3);
 }
