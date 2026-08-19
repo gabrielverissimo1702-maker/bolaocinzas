@@ -17,7 +17,7 @@ export function PerfilForm({
   nome: string;
   sigla: string;
   cores: string[];
-  padraoUniforme: "SOLIDO" | "LISTRAS_VERTICAIS" | "LISTRAS_HORIZONTAIS" | "LISTRAS_DIAGONAIS";
+  padraoUniforme: "SOLIDO" | "LISTRAS_VERTICAIS" | "LISTRAS_HORIZONTAIS" | "LISTRAS_DIAGONAIS" | "MANGAS_CONTRASTANTES" | "GOLA_CONTRASTANTE" | "BICOLOR" | "DEGRADE";
 }) {
   const [state, formAction, pending] = useActionState(atualizarPerfil, initialState);
 

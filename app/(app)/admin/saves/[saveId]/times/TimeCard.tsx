@@ -15,7 +15,7 @@ export interface TimeCardData {
   nome: string;
   sigla: string;
   cores: string[];
-  padraoUniforme: "SOLIDO" | "LISTRAS_VERTICAIS" | "LISTRAS_HORIZONTAIS" | "LISTRAS_DIAGONAIS";
+  padraoUniforme: "SOLIDO" | "LISTRAS_VERTICAIS" | "LISTRAS_HORIZONTAIS" | "LISTRAS_DIAGONAIS" | "MANGAS_CONTRASTANTES" | "GOLA_CONTRASTANTE" | "BICOLOR" | "DEGRADE";
 }
 
 export function TimeCard({ time, saveId }: { time: TimeCardData; saveId: string }) {

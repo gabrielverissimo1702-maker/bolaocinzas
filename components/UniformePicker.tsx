@@ -8,6 +8,10 @@ const PADROES = [
   { value: "LISTRAS_VERTICAIS", label: "Listras verticais" },
   { value: "LISTRAS_HORIZONTAIS", label: "Listras horizontais" },
   { value: "LISTRAS_DIAGONAIS", label: "Listras diagonais" },
+  { value: "MANGAS_CONTRASTANTES", label: "Mangas contrastantes" },
+  { value: "GOLA_CONTRASTANTE", label: "Gola contrastante" },
+  { value: "BICOLOR", label: "Bicolor" },
+  { value: "DEGRADE", label: "Degradê" },
 ] as const;
 
 const CORES_PADRAO = ["#16a34a", "#ffffff", "#1B1B1B", "#E30613"];
@@ -21,7 +25,15 @@ export function UniformePicker({
 }: {
   siglaInicial?: string;
   coresIniciais?: string[];
-  padraoInicial?: "SOLIDO" | "LISTRAS_VERTICAIS" | "LISTRAS_HORIZONTAIS" | "LISTRAS_DIAGONAIS";
+  padraoInicial?:
+    | "SOLIDO"
+    | "LISTRAS_VERTICAIS"
+    | "LISTRAS_HORIZONTAIS"
+    | "LISTRAS_DIAGONAIS"
+    | "MANGAS_CONTRASTANTES"
+    | "GOLA_CONTRASTANTE"
+    | "BICOLOR"
+    | "DEGRADE";
   siglaLabel?: string;
   siglaPlaceholder?: string;
 }) {

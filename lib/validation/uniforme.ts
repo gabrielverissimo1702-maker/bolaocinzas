@@ -13,7 +13,16 @@ export const uniformeFields = {
     .max(4, "Sigla deve ter no máximo 4 letras")
     .transform((v) => v.toUpperCase()),
   cores: z.array(corHex).min(1, "Escolha ao menos 1 cor").max(4, "No máximo 4 cores"),
-  padraoUniforme: z.enum(["SOLIDO", "LISTRAS_VERTICAIS", "LISTRAS_HORIZONTAIS", "LISTRAS_DIAGONAIS"]),
+  padraoUniforme: z.enum([
+    "SOLIDO",
+    "LISTRAS_VERTICAIS",
+    "LISTRAS_HORIZONTAIS",
+    "LISTRAS_DIAGONAIS",
+    "MANGAS_CONTRASTANTES",
+    "GOLA_CONTRASTANTE",
+    "BICOLOR",
+    "DEGRADE",
+  ]),
 };
 
 export const uniformeSchema = z
