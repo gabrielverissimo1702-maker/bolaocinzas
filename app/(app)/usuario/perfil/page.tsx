@@ -12,7 +12,13 @@ export default async function PerfilPage() {
       <PageHeader title="Perfil" backHref="/" backLabel="Início" />
 
       <Card className="mb-4 flex items-center gap-4">
-        <Jersey cores={usuario.cores} padraoUniforme={usuario.padraoUniforme} sigla={usuario.sigla} size={56} />
+        <Jersey
+          cores={usuario.cores}
+          padraoUniforme={usuario.padraoUniforme}
+          sigla={usuario.sigla}
+          corSigla={usuario.corSigla}
+          size={56}
+        />
         <div>
           <p className="font-semibold text-slate-900 dark:text-slate-50">{usuario.nome}</p>
           <p className="text-sm text-slate-500 dark:text-slate-400">{usuario.email}</p>
@@ -26,6 +32,7 @@ export default async function PerfilPage() {
           sigla={usuario.sigla}
           cores={usuario.cores}
           padraoUniforme={usuario.padraoUniforme}
+          corSigla={usuario.corSigla}
         />
       </Card>
     </div>

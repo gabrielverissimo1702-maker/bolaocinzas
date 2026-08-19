@@ -83,6 +83,7 @@ model Usuario {
   sigla                    String         @default("USR")
   cores                    String[]       @default(["#6B7280"])
   padraoUniforme           PadraoUniforme @default(SOLIDO)
+  corSigla                 String         @default("#FFFFFF")
   emailVerificado          Boolean        @default(false)
   tokenVerificacao         String?        @unique
   tokenVerificacaoExpiraEm DateTime?
@@ -156,6 +157,7 @@ model Time {
   sigla          String
   cores          String[]
   padraoUniforme PadraoUniforme @default(SOLIDO)
+  corSigla       String         @default("#FFFFFF")
   createdAt      DateTime       @default(now())
 
   jogosCasa      Jogo[] @relation("JogoTimeCasa")

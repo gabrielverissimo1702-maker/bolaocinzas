@@ -32,6 +32,7 @@ function usuarioInfo(usuario: UsuarioUniformeInfo): UsuarioUniformeInfo {
     sigla: usuario.sigla,
     cores: usuario.cores,
     padraoUniforme: usuario.padraoUniforme,
+    corSigla: usuario.corSigla,
   };
 }
 

@@ -23,6 +23,7 @@ export const uniformeFields = {
     "BICOLOR",
     "DEGRADE",
   ]),
+  corSigla: corHex,
 };
 
 export const uniformeSchema = z

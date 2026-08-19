@@ -18,6 +18,7 @@ export async function atualizarPerfil(
     sigla: formData.get("sigla"),
     cores: formData.getAll("cores"),
     padraoUniforme: formData.get("padraoUniforme"),
+    corSigla: formData.get("corSigla"),
   });
   if (!parsed.success) {
     return { error: parsed.error.issues[0]?.message ?? "Dados inválidos" };

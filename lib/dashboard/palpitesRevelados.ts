@@ -6,6 +6,7 @@ export interface PalpiteRevelado {
   sigla: string;
   cores: string[];
   padraoUniforme: "SOLIDO" | "LISTRAS_VERTICAIS" | "LISTRAS_HORIZONTAIS" | "LISTRAS_DIAGONAIS" | "MANGAS_CONTRASTANTES" | "GOLA_CONTRASTANTE" | "BICOLOR" | "DEGRADE";
+  corSigla: string;
   placarCasa: number;
   placarVisitante: number;
   tipoResultado: string | null;
@@ -29,6 +30,7 @@ export async function buscarPalpitesRevelados(jogoId: string, usuarioIds?: strin
     sigla: p.usuario.sigla,
     cores: p.usuario.cores,
     padraoUniforme: p.usuario.padraoUniforme,
+    corSigla: p.usuario.corSigla,
     placarCasa: p.placarCasa,
     placarVisitante: p.placarVisitante,
     tipoResultado: p.tipoResultado === "PENDENTE" ? null : p.tipoResultado,

@@ -20,12 +20,14 @@ export function Jersey({
   cores,
   padraoUniforme,
   sigla,
+  corSigla = "#FFFFFF",
   size = 40,
   className = "",
 }: {
   cores: string[];
   padraoUniforme: Padrao;
   sigla: string;
+  corSigla?: string;
   size?: number;
   className?: string;
 }) {
@@ -113,7 +115,7 @@ export function Jersey({
         textAnchor="middle"
         fontSize="22"
         fontWeight="800"
-        fill="white"
+        fill={corSigla}
         stroke="rgba(0,0,0,0.4)"
         strokeWidth="2"
         paintOrder="stroke"

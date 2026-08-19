@@ -24,6 +24,7 @@ interface TimeInfo {
   sigla: string;
   cores: string[];
   padraoUniforme: "SOLIDO" | "LISTRAS_VERTICAIS" | "LISTRAS_HORIZONTAIS" | "LISTRAS_DIAGONAIS" | "MANGAS_CONTRASTANTES" | "GOLA_CONTRASTANTE" | "BICOLOR" | "DEGRADE";
+  corSigla: string;
 }
 
 export interface PalpiteRevelado {
@@ -32,6 +33,7 @@ export interface PalpiteRevelado {
   sigla: string;
   cores: string[];
   padraoUniforme: "SOLIDO" | "LISTRAS_VERTICAIS" | "LISTRAS_HORIZONTAIS" | "LISTRAS_DIAGONAIS" | "MANGAS_CONTRASTANTES" | "GOLA_CONTRASTANTE" | "BICOLOR" | "DEGRADE";
+  corSigla: string;
   placarCasa: number;
   placarVisitante: number;
   tipoResultado: string | null;

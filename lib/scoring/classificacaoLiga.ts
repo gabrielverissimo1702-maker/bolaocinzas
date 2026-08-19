@@ -6,6 +6,7 @@ export interface LinhaClassificacao {
   sigla: string;
   cores: string[];
   padraoUniforme: "SOLIDO" | "LISTRAS_VERTICAIS" | "LISTRAS_HORIZONTAIS" | "LISTRAS_DIAGONAIS" | "MANGAS_CONTRASTANTES" | "GOLA_CONTRASTANTE" | "BICOLOR" | "DEGRADE";
+  corSigla: string;
   pontos: number;
   cravadas: number;
 }
@@ -42,6 +43,7 @@ export async function calcularClassificacaoLiga(competicaoId: string): Promise<L
     sigla: p.usuario.sigla,
     cores: p.usuario.cores,
     padraoUniforme: p.usuario.padraoUniforme,
+    corSigla: p.usuario.corSigla,
     pontos: pontosPorUsuario.get(p.usuarioId) ?? 0,
     cravadas: cravadasMap.get(p.usuarioId) ?? 0,
   }));

@@ -13,11 +13,13 @@ export function PerfilForm({
   sigla,
   cores,
   padraoUniforme,
+  corSigla,
 }: {
   nome: string;
   sigla: string;
   cores: string[];
   padraoUniforme: "SOLIDO" | "LISTRAS_VERTICAIS" | "LISTRAS_HORIZONTAIS" | "LISTRAS_DIAGONAIS" | "MANGAS_CONTRASTANTES" | "GOLA_CONTRASTANTE" | "BICOLOR" | "DEGRADE";
+  corSigla: string;
 }) {
   const [state, formAction, pending] = useActionState(atualizarPerfil, initialState);
 
@@ -29,6 +31,7 @@ export function PerfilForm({
         siglaInicial={sigla}
         coresIniciais={cores}
         padraoInicial={padraoUniforme}
+        corSiglaInicial={corSigla}
         siglaLabel="Sua sigla"
       />
 

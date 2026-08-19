@@ -21,6 +21,7 @@ export async function criarTime(
     sigla: formData.get("sigla"),
     cores: formData.getAll("cores"),
     padraoUniforme: formData.get("padraoUniforme"),
+    corSigla: formData.get("corSigla"),
   });
   if (!parsed.success) {
     return { error: parsed.error.issues[0]?.message ?? "Dados inválidos" };
@@ -40,6 +41,7 @@ export async function criarTime(
       sigla: parsed.data.sigla,
       cores: parsed.data.cores,
       padraoUniforme: parsed.data.padraoUniforme,
+      corSigla: parsed.data.corSigla,
     },
   });
 
@@ -61,6 +63,7 @@ export async function atualizarTime(
     sigla: formData.get("sigla"),
     cores: formData.getAll("cores"),
     padraoUniforme: formData.get("padraoUniforme"),
+    corSigla: formData.get("corSigla"),
   });
   if (!parsed.success) {
     return { error: parsed.error.issues[0]?.message ?? "Dados inválidos" };
@@ -80,6 +83,7 @@ export async function atualizarTime(
       sigla: parsed.data.sigla,
       cores: parsed.data.cores,
       padraoUniforme: parsed.data.padraoUniforme,
+      corSigla: parsed.data.corSigla,
     },
   });
 

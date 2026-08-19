@@ -82,6 +82,7 @@ export default async function CompeticaoDetailPage({
         sigla: p.usuario.sigla,
         cores: p.usuario.cores,
         padraoUniforme: p.usuario.padraoUniforme,
+        corSigla: p.usuario.corSigla,
       }));
 
     etapasAdmin = competicao.etapas.map((etapa) => ({
@@ -99,6 +100,7 @@ export default async function CompeticaoDetailPage({
                 sigla: c.participanteA.usuario.sigla,
                 cores: c.participanteA.usuario.cores,
                 padraoUniforme: c.participanteA.usuario.padraoUniforme,
+                corSigla: c.participanteA.usuario.corSigla,
               }
             : null,
           participanteB: c.participanteB
@@ -108,6 +110,7 @@ export default async function CompeticaoDetailPage({
                 sigla: c.participanteB.usuario.sigla,
                 cores: c.participanteB.usuario.cores,
                 padraoUniforme: c.participanteB.usuario.padraoUniforme,
+                corSigla: c.participanteB.usuario.corSigla,
               }
             : null,
           pontosA: temConfrontoReal ? pontosDoParticipante(c.participanteA?.usuarioId, etapa.id, c.id) : null,

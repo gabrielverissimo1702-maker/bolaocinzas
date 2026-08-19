@@ -16,6 +16,7 @@ export interface TimeCardData {
   sigla: string;
   cores: string[];
   padraoUniforme: "SOLIDO" | "LISTRAS_VERTICAIS" | "LISTRAS_HORIZONTAIS" | "LISTRAS_DIAGONAIS" | "MANGAS_CONTRASTANTES" | "GOLA_CONTRASTANTE" | "BICOLOR" | "DEGRADE";
+  corSigla: string;
 }
 
 export function TimeCard({ time, saveId }: { time: TimeCardData; saveId: string }) {
@@ -30,7 +31,13 @@ export function TimeCard({ time, saveId }: { time: TimeCardData; saveId: string 
     return (
       <Card className="flex items-center justify-between py-3">
         <div className="flex items-center gap-3">
-          <Jersey cores={time.cores} padraoUniforme={time.padraoUniforme} sigla={time.sigla} size={40} />
+          <Jersey
+            cores={time.cores}
+            padraoUniforme={time.padraoUniforme}
+            sigla={time.sigla}
+            corSigla={time.corSigla}
+            size={40}
+          />
           <div>
             <p className="font-medium text-slate-900 dark:text-slate-50">{time.nome}</p>
             <p className="text-xs text-slate-500 dark:text-slate-400">{time.sigla}</p>
@@ -65,7 +72,12 @@ export function TimeCard({ time, saveId }: { time: TimeCardData; saveId: string 
 
         <Input name="nome" type="text" label="Nome do time" defaultValue={time.nome} required />
 
-        <UniformePicker siglaInicial={time.sigla} coresIniciais={time.cores} padraoInicial={time.padraoUniforme} />
+        <UniformePicker
+          siglaInicial={time.sigla}
+          coresIniciais={time.cores}
+          padraoInicial={time.padraoUniforme}
+          corSiglaInicial={time.corSigla}
+        />
 
         {state.error && <p className="text-sm text-red-600 dark:text-red-400">{state.error}</p>}
 

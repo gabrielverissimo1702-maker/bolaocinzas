@@ -27,13 +27,14 @@ export async function cadastrar(
     sigla: formData.get("sigla"),
     cores: formData.getAll("cores"),
     padraoUniforme: formData.get("padraoUniforme"),
+    corSigla: formData.get("corSigla"),
   });
 
   if (!parsed.success) {
     return { error: parsed.error.issues[0]?.message ?? "Dados inválidos" };
   }
 
-  const { nome, email, senha, sigla, cores, padraoUniforme } = parsed.data;
+  const { nome, email, senha, sigla, cores, padraoUniforme, corSigla } = parsed.data;
 
   const existente = await prisma.usuario.findUnique({ where: { email } });
   if (existente) {
@@ -52,6 +53,7 @@ export async function cadastrar(
       sigla,
       cores,
       padraoUniforme,
+      corSigla,
       tokenVerificacao,
       tokenVerificacaoExpiraEm,
     },

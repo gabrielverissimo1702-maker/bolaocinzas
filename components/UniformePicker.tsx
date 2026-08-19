@@ -20,6 +20,7 @@ export function UniformePicker({
   siglaInicial = "",
   coresIniciais = CORES_PADRAO,
   padraoInicial = "SOLIDO",
+  corSiglaInicial = "#FFFFFF",
   siglaLabel = "Sigla",
   siglaPlaceholder = "ex: FLA",
 }: {
@@ -34,6 +35,7 @@ export function UniformePicker({
     | "GOLA_CONTRASTANTE"
     | "BICOLOR"
     | "DEGRADE";
+  corSiglaInicial?: string;
   siglaLabel?: string;
   siglaPlaceholder?: string;
 }) {
@@ -45,6 +47,7 @@ export function UniformePicker({
   const [padrao, setPadrao] = useState<(typeof PADROES)[number]["value"]>(
     padraoInicial === "SOLIDO" ? "LISTRAS_VERTICAIS" : padraoInicial
   );
+  const [corSigla, setCorSigla] = useState(corSiglaInicial);
 
   const padraoFinal = numeroCores === 1 ? "SOLIDO" : padrao;
   const coresAtivas = cores.slice(0, numeroCores);
@@ -104,7 +107,18 @@ export function UniformePicker({
             </label>
           ))}
 
-          <Jersey cores={coresAtivas} padraoUniforme={padraoFinal} sigla={sigla || "?"} size={56} />
+          <label className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400">
+            Cor da sigla
+            <input
+              type="color"
+              name="corSigla"
+              value={corSigla}
+              onChange={(e) => setCorSigla(e.target.value)}
+              className="h-8 w-10 cursor-pointer rounded border border-slate-300 dark:border-slate-700"
+            />
+          </label>
+
+          <Jersey cores={coresAtivas} padraoUniforme={padraoFinal} sigla={sigla || "?"} corSigla={corSigla} size={56} />
         </div>
 
         {numeroCores >= 2 && (
