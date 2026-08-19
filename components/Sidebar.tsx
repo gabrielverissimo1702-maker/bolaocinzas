@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Logo } from "./ui/Logo";
-import { IconHome, IconLayers, IconTrophy, IconTarget, IconUser, IconLogOut } from "./ui/icons";
+import { IconHome, IconLayers, IconTrophy, IconTarget, IconUser, IconLogOut, IconClock } from "./ui/icons";
 import { sair } from "@/app/actions/auth";
 import { useModo } from "@/lib/ModoContext";
 
@@ -11,6 +11,7 @@ const linksUsuario = [
   { href: "/", label: "Início", icon: IconHome },
   { href: "/usuario/saves", label: "Meus Saves", icon: IconLayers },
   { href: "/usuario/palpites", label: "Palpites", icon: IconTrophy },
+  { href: "/usuario/historico", label: "Histórico", icon: IconClock },
 ];
 
 const linksAdmin = [

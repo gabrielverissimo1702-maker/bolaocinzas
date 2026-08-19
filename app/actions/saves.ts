@@ -57,6 +57,19 @@ export async function entrarComCodigo(
   redirect(`/usuario/saves/${save.id}`);
 }
 
+export async function excluirSave(saveId: string) {
+  const usuario = await requireUsuario();
+  await requireSaveOwner(saveId, usuario.id);
+
+  // Jogo referencia Time e CopaConfronto sem cascade — apaga primeiro pra evitar
+  // violação de FK quando o Postgres decide a ordem das cascatas de exclusão.
+  await prisma.jogo.deleteMany({ where: { etapa: { competicao: { temporada: { saveId } } } } });
+  await prisma.save.delete({ where: { id: saveId } });
+
+  revalidatePath("/admin/saves");
+  redirect("/admin/saves");
+}
+
 export async function removerParticipante(temporadaParticipanteId: string, saveId: string) {
   const usuario = await requireUsuario();
   await requireSaveOwner(saveId, usuario.id);

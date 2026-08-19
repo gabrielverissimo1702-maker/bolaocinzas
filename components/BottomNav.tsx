@@ -2,13 +2,14 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { IconHome, IconLayers, IconTrophy, IconTarget, IconUser } from "./ui/icons";
+import { IconHome, IconLayers, IconTrophy, IconTarget, IconUser, IconClock } from "./ui/icons";
 import { useModo } from "@/lib/ModoContext";
 
 const linksUsuario = [
-  { href: "/", label: "InÃ­cio", icon: IconHome },
+  { href: "/", label: "Início", icon: IconHome },
   { href: "/usuario/saves", label: "Saves", icon: IconLayers },
   { href: "/usuario/palpites", label: "Palpites", icon: IconTrophy },
+  { href: "/usuario/historico", label: "Histórico", icon: IconClock },
   { href: "/usuario/perfil", label: "Perfil", icon: IconUser },
 ];
 

@@ -1,5 +1,6 @@
 "use server";
 
+import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { requireUsuario } from "@/lib/auth/session";
@@ -40,6 +41,24 @@ export async function alternarStatusTemporada(temporadaId: string, saveId: strin
   });
 
   revalidatePath(`/admin/saves/${saveId}/temporadas`);
+}
+
+export async function excluirTemporada(saveId: string, temporadaId: string) {
+  const usuario = await requireUsuario();
+  await requireSaveOwner(saveId, usuario.id);
+
+  const temporada = await prisma.temporada.findUnique({ where: { id: temporadaId } });
+  if (!temporada || temporada.saveId !== saveId) {
+    throw new Error("Temporada não encontrada");
+  }
+
+  // Jogo referencia Time e CopaConfronto sem cascade — apaga primeiro pra evitar
+  // violação de FK quando o Postgres decide a ordem das cascatas de exclusão.
+  await prisma.jogo.deleteMany({ where: { etapa: { competicao: { temporadaId } } } });
+  await prisma.temporada.delete({ where: { id: temporadaId } });
+
+  revalidatePath(`/admin/saves/${saveId}`);
+  redirect(`/admin/saves/${saveId}`);
 }
 
 export async function solicitarAcessoTemporada(temporadaId: string, saveId: string) {

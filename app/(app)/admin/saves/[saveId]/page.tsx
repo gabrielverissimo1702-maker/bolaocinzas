@@ -2,10 +2,12 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { requireUsuario } from "@/lib/auth/session";
 import { prisma } from "@/lib/prisma";
+import { excluirSave } from "@/app/actions/saves";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { TipoTag } from "@/components/ui/TipoTag";
+import { ZonaPerigo } from "@/components/admin/ZonaPerigo";
 import { IconShield, IconUsers, IconPlus } from "@/components/ui/icons";
 
 const STATUS_LABEL: Record<string, string> = {
@@ -113,6 +115,13 @@ export default async function AdminSaveDetailPage({
           <p className="text-sm text-slate-500 dark:text-slate-400">Este save ainda não tem temporadas.</p>
         )}
       </div>
+
+      <ZonaPerigo
+        titulo="Excluir save"
+        descricao="Apaga o save inteiro: times, temporadas, competições, jogos e palpites de todos os participantes. Não pode ser desfeito."
+        nomeConfirmacao={save.nome}
+        action={excluirSave.bind(null, saveId)}
+      />
     </div>
   );
 }

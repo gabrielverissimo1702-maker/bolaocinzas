@@ -3,9 +3,11 @@ import { notFound } from "next/navigation";
 import { requireUsuario } from "@/lib/auth/session";
 import { requireSaveOwner } from "@/lib/auth/authorization";
 import { prisma } from "@/lib/prisma";
+import { excluirTemporada } from "@/app/actions/temporadas";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { Card } from "@/components/ui/Card";
 import { LinkButton } from "@/components/ui/Button";
+import { ZonaPerigo } from "@/components/admin/ZonaPerigo";
 import { IconPlus, IconTrophy } from "@/components/ui/icons";
 
 const TIPO_LABEL: Record<string, string> = {
@@ -71,6 +73,13 @@ export default async function TemporadaDetailPage({
           <p className="text-sm text-slate-500 dark:text-slate-400">Nenhuma competição criada ainda.</p>
         )}
       </ul>
+
+      <ZonaPerigo
+        titulo="Excluir temporada"
+        descricao="Apaga a temporada inteira: competições, jogos e palpites de todos os participantes. Não pode ser desfeito."
+        nomeConfirmacao={temporada.nome}
+        action={excluirTemporada.bind(null, saveId, temporadaId)}
+      />
     </div>
   );
 }
