@@ -10,7 +10,7 @@ import { RodadasResumoLista } from "@/components/RodadasResumoLista";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { Badge } from "@/components/ui/Badge";
 import { LinkButton } from "@/components/ui/Button";
-import { IconPlus, IconRefresh } from "@/components/ui/icons";
+import { IconPlus, IconRefresh, IconTrophy } from "@/components/ui/icons";
 
 const TIPO_LABEL: Record<string, string> = {
   LIGA: "Liga",
@@ -160,6 +160,15 @@ export default async function CompeticaoDetailPage({
           <IconRefresh className="h-4 w-4" />
           Atualizar jogos
         </LinkButton>
+        {competicao.tipo === "LIGA" && (
+          <LinkButton
+            variant="outline"
+            href={`/admin/saves/${saveId}/temporadas/${temporadaId}/competicoes/${competicaoId}/classificacao`}
+          >
+            <IconTrophy className="h-4 w-4" />
+            Classificação
+          </LinkButton>
+        )}
       </div>
 
       {usaChaveamento && totalConfrontos === 0 && (
